@@ -1,22 +1,54 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import gsap from "gsap";
 
-export default function HomePage() {
-  const worldCupDate = new Date("2026-06-11T00:00:00");
-  const now = new Date();
-  const diffMs = worldCupDate.getTime() - now.getTime();
-  const totalSeconds = Math.max(0, Math.floor(diffMs / 1000));
+const WORLD_CUP_DATE = new Date("2026-06-11T00:00:00").getTime();
 
-  const [days, setDays] = useState(Math.floor(totalSeconds / 86400));
-  const [hours, setHours] = useState(Math.floor((totalSeconds % 86400) / 3600));
-  const [minutes, setMinutes] = useState(
-    Math.floor((totalSeconds % 3600) / 60)
-  );
-  const [seconds, setSeconds] = useState(totalSeconds % 60);
+interface TimeLeft {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+}
+
+const SERVER_SNAPSHOT: TimeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
+
+let cachedSnapshot = SERVER_SNAPSHOT;
+let cachedSecond = -1;
+
+function getSnapshot(): TimeLeft {
+  const now = Math.floor(Date.now() / 1000);
+  if (now !== cachedSecond) {
+    cachedSecond = now;
+    const diff = Math.max(0, Math.floor((WORLD_CUP_DATE - now * 1000) / 1000));
+    cachedSnapshot = {
+      days: Math.floor(diff / 86400),
+      hours: Math.floor((diff % 86400) / 3600),
+      minutes: Math.floor((diff % 3600) / 60),
+      seconds: diff % 60,
+    };
+  }
+  return cachedSnapshot;
+}
+
+function getServerSnapshot(): TimeLeft {
+  return SERVER_SNAPSHOT;
+}
+
+function subscribe(onStoreChange: () => void) {
+  const interval = setInterval(onStoreChange, 1000);
+  return () => clearInterval(interval);
+}
+
+function useCountdown(): TimeLeft {
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+}
+
+export default function HomePage() {
+  const timeLeft = useCountdown();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -25,23 +57,6 @@ export default function HomePage() {
   const infoRef = useRef<HTMLParagraphElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
   const particlesRef = useRef<HTMLDivElement>(null);
-
-  // Live countdown
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const now = new Date();
-      const diff = Math.max(
-        0,
-        Math.floor((worldCupDate.getTime() - now.getTime()) / 1000)
-      );
-      setDays(Math.floor(diff / 86400));
-      setHours(Math.floor((diff % 86400) / 3600));
-      setMinutes(Math.floor((diff % 3600) / 60));
-      setSeconds(diff % 60);
-    }, 1000);
-    return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // GSAP animations
   useEffect(() => {
@@ -167,19 +182,19 @@ export default function HomePage() {
             Faltan
           </p>
           <div className="flex justify-center gap-3 sm:gap-5">
-            <CountdownUnit value={days} label="Dias" />
+            <CountdownUnit value={timeLeft.days} label="Dias" />
             <span className="text-3xl font-bold text-blue-300 self-start mt-1">
               :
             </span>
-            <CountdownUnit value={hours} label="Horas" />
+            <CountdownUnit value={timeLeft.hours} label="Horas" />
             <span className="text-3xl font-bold text-blue-300 self-start mt-1">
               :
             </span>
-            <CountdownUnit value={minutes} label="Min" />
+            <CountdownUnit value={timeLeft.minutes} label="Min" />
             <span className="text-3xl font-bold text-blue-300 self-start mt-1">
               :
             </span>
-            <CountdownUnit value={seconds} label="Seg" />
+            <CountdownUnit value={timeLeft.seconds} label="Seg" />
           </div>
         </div>
 
