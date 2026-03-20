@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { NumberInput } from "@/components/ui/number-input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
@@ -70,12 +70,10 @@ export default function ScoringPage() {
             <p className="text-xs text-muted-foreground">
               Puntos cuando el usuario acierta el marcador exacto
             </p>
-            <Input
+            <NumberInput
               id="exactScore"
-              type="number"
-              min="0"
               value={exactScore}
-              onChange={(e) => setExactScore(e.target.value)}
+              onChange={setExactScore}
             />
           </div>
 
@@ -86,12 +84,10 @@ export default function ScoringPage() {
             <p className="text-xs text-muted-foreground">
               Puntos cuando acierta el ganador pero no el marcador
             </p>
-            <Input
+            <NumberInput
               id="correctWinner"
-              type="number"
-              min="0"
               value={correctWinner}
-              onChange={(e) => setCorrectWinner(e.target.value)}
+              onChange={setCorrectWinner}
             />
           </div>
 
@@ -102,12 +98,10 @@ export default function ScoringPage() {
             <p className="text-xs text-muted-foreground">
               Puntos cuando predice empate y es empate, pero diferente marcador
             </p>
-            <Input
+            <NumberInput
               id="correctDraw"
-              type="number"
-              min="0"
               value={correctDraw}
-              onChange={(e) => setCorrectDraw(e.target.value)}
+              onChange={setCorrectDraw}
             />
           </div>
 

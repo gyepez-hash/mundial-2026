@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { NumberInput } from "@/components/ui/number-input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
@@ -82,24 +82,18 @@ export function PredictionForm({
             <div className="flex items-end gap-4 justify-center">
               <div className="space-y-1 text-center">
                 <Label className="text-xs">{homeTeamName}</Label>
-                <Input
-                  type="number"
-                  min="0"
-                  max="20"
+                <NumberInput
                   value={homeScore}
-                  onChange={(e) => setHomeScore(e.target.value)}
+                  onChange={setHomeScore}
                   className="w-16 text-center text-lg font-bold"
                 />
               </div>
               <span className="text-lg font-bold pb-2">-</span>
               <div className="space-y-1 text-center">
                 <Label className="text-xs">{awayTeamName}</Label>
-                <Input
-                  type="number"
-                  min="0"
-                  max="20"
+                <NumberInput
                   value={awayScore}
-                  onChange={(e) => setAwayScore(e.target.value)}
+                  onChange={setAwayScore}
                   className="w-16 text-center text-lg font-bold"
                 />
               </div>

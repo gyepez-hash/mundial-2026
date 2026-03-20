@@ -12,5 +12,12 @@ export default async function AdminPage() {
     dateTime: m.dateTime.toISOString(),
   }));
 
-  return <AdminMatchesClient matches={serialized} />;
+  return (
+    <div className="mx-auto max-w-6xl px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6 text-blue-900">
+        Administrar partidos
+      </h1>
+      <AdminMatchesClient matches={serialized} />
+    </div>
+  );
 }
