@@ -43,7 +43,9 @@ export function AdminMatchesClient({ matches }: { matches: Match[] }) {
   async function handleSaveResult(matchId: string) {
     const s = getScore(matchId);
     if (s.home === "" || s.away === "") {
-      toast.error("Ingresa ambos marcadores");
+      toast.error("Ingresa ambos marcadores", {
+        description: "Debes llenar el marcador de ambos equipos.",
+      });
       return;
     }
 
@@ -61,14 +63,20 @@ export function AdminMatchesClient({ matches }: { matches: Match[] }) {
 
       if (!res.ok) {
         const data = await res.json();
-        toast.error(data.error ?? "Error al guardar resultado");
+        toast.error(data.error ?? "Error al guardar resultado", {
+          description: "No se pudo guardar el resultado del partido.",
+        });
         return;
       }
 
       const data = await res.json();
-      toast.success(`Resultado guardado. ${data.scored} predicciones calificadas.`);
+      toast.success("Resultado guardado", {
+        description: `Se calificaron ${data.scored} predicciones correctamente.`,
+      });
     } catch {
-      toast.error("Error de conexion");
+      toast.error("Error de conexion", {
+        description: "No se pudo conectar al servidor. Intenta mas tarde.",
+      });
     } finally {
       setLoading(null);
     }
@@ -84,13 +92,17 @@ export function AdminMatchesClient({ matches }: { matches: Match[] }) {
       });
 
       if (!res.ok) {
-        toast.error("Error al bloquear partido");
+        toast.error("Error al bloquear partido", {
+          description: "No se pudo bloquear. Intenta de nuevo.",
+        });
         return;
       }
 
       toast.success("Partido bloqueado");
     } catch {
-      toast.error("Error de conexion");
+      toast.error("Error de conexion", {
+        description: "No se pudo conectar al servidor. Intenta mas tarde.",
+      });
     } finally {
       setLoading(null);
     }

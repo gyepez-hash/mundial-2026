@@ -30,7 +30,9 @@ export default function SignInPage() {
 
         if (!res.ok) {
           const data = await res.json();
-          toast.error(data.error ?? "Error al registrarse");
+          toast.error(data.error ?? "Error al registrarse", {
+            description: "Revisa los datos e intenta de nuevo.",
+          });
           setLoading(false);
           return;
         }
@@ -45,14 +47,18 @@ export default function SignInPage() {
       });
 
       if (result?.error) {
-        toast.error("Correo o contraseña incorrectos");
+        toast.error("Correo o contraseña incorrectos", {
+          description: "Verifica tus credenciales e intenta nuevamente.",
+        });
         setLoading(false);
         return;
       }
 
       router.push("/matches");
     } catch {
-      toast.error("Error de conexion");
+      toast.error("Error de conexion", {
+        description: "No se pudo conectar al servidor. Intenta mas tarde.",
+      });
       setLoading(false);
     }
   }

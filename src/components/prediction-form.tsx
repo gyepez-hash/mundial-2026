@@ -31,7 +31,9 @@ export function PredictionForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (homeScore === "" || awayScore === "") {
-      toast.error("Ingresa ambos marcadores");
+      toast.error("Ingresa ambos marcadores", {
+        description: "Debes llenar el marcador de ambos equipos.",
+      });
       return;
     }
 
@@ -49,13 +51,17 @@ export function PredictionForm({
 
       if (!res.ok) {
         const data = await res.json();
-        toast.error(data.error ?? "Error al guardar prediccion");
+        toast.error(data.error ?? "Error al guardar prediccion", {
+          description: "Hubo un problema al guardar. Intenta de nuevo.",
+        });
         return;
       }
 
       toast.success("Prediccion guardada correctamente");
     } catch {
-      toast.error("Error de conexion");
+      toast.error("Error de conexion", {
+        description: "No se pudo conectar al servidor. Intenta mas tarde.",
+      });
     } finally {
       setLoading(false);
     }

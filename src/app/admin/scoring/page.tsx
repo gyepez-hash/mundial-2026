@@ -40,13 +40,17 @@ export default function ScoringPage() {
       });
 
       if (!res.ok) {
-        toast.error("Error al guardar configuracion");
+        toast.error("Error al guardar configuracion", {
+          description: "No se pudieron guardar los puntos. Intenta de nuevo.",
+        });
         return;
       }
 
       toast.success("Configuracion de puntos actualizada");
     } catch {
-      toast.error("Error de conexion");
+      toast.error("Error de conexion", {
+        description: "No se pudo conectar al servidor. Intenta mas tarde.",
+      });
     } finally {
       setLoading(false);
     }
