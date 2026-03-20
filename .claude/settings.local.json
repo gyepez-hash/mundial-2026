@@ -5,7 +5,8 @@
       "Bash(sqlite3:*)",
       "Bash(npm install:*)",
       "Bash(grep -r \"grupo\\\\|Grupo\\\\|fase\\\\|estado\\\\|stage\\\\|status\" C:Projectsmisreposmundial-2026srclib --include=*.ts)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(npm uninstall:*)"
     ]
   }
 }
