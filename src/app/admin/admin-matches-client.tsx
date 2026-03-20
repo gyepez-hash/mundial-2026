@@ -26,8 +26,8 @@ interface Match {
   homeScore: number | null;
   awayScore: number | null;
   status: string;
-  homeTeam: { name: string; code: string } | null;
-  awayTeam: { name: string; code: string } | null;
+  homeTeam: { name: string; code: string; flagUrl: string | null } | null;
+  awayTeam: { name: string; code: string; flagUrl: string | null } | null;
 }
 
 export function AdminMatchesClient({ matches }: { matches: Match[] }) {
@@ -117,7 +117,7 @@ export function AdminMatchesClient({ matches }: { matches: Match[] }) {
             <TableHead>Partido</TableHead>
             <TableHead>Grupo</TableHead>
             <TableHead>Estado</TableHead>
-            <TableHead className="text-center">Resultado</TableHead>
+            <TableHead >Resultado</TableHead>
             <TableHead>Acciones</TableHead>
           </TableRow>
         </TableHeader>
@@ -130,8 +130,17 @@ export function AdminMatchesClient({ matches }: { matches: Match[] }) {
                   {match.matchNumber}
                 </TableCell>
                 <TableCell className="font-medium whitespace-nowrap">
-                  {match.homeTeam?.code ?? "TBD"} vs{" "}
-                  {match.awayTeam?.code ?? "TBD"}
+                  <div className="flex items-center gap-1.5">
+                    {match.homeTeam?.flagUrl && (
+                      <img src={match.homeTeam.flagUrl} alt={match.homeTeam.code} className="w-5 h-4 object-cover rounded-sm" />
+                    )}
+                    {match.homeTeam?.code ?? "TBD"}
+                    <span className="text-muted-foreground">vs</span>
+                    {match.awayTeam?.flagUrl && (
+                      <img src={match.awayTeam.flagUrl} alt={match.awayTeam.code} className="w-5 h-4 object-cover rounded-sm" />
+                    )}
+                    {match.awayTeam?.code ?? "TBD"}
+                  </div>
                 </TableCell>
                 <TableCell>
                   {match.group ? (

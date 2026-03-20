@@ -54,7 +54,14 @@ export default async function MatchDetailPage({
       </div>
 
       <div className="flex items-center justify-center gap-6 py-4">
-        <div className="text-center space-y-1">
+        <div className="text-center space-y-2">
+          {match.homeTeam?.flagUrl && (
+            <img
+              src={match.homeTeam.flagUrl}
+              alt={match.homeTeam.code}
+              className="w-12 h-9 object-cover rounded shadow-sm mx-auto"
+            />
+          )}
           <p className="text-2xl font-bold">
             {match.homeTeam?.name ?? "Por definir"}
           </p>
@@ -73,7 +80,14 @@ export default async function MatchDetailPage({
           )}
         </div>
 
-        <div className="text-center space-y-1">
+        <div className="text-center space-y-2">
+          {match.awayTeam?.flagUrl && (
+            <img
+              src={match.awayTeam.flagUrl}
+              alt={match.awayTeam.code}
+              className="w-12 h-9 object-cover rounded shadow-sm mx-auto"
+            />
+          )}
           <p className="text-2xl font-bold">
             {match.awayTeam?.name ?? "Por definir"}
           </p>

@@ -15,8 +15,8 @@ interface MatchCardProps {
     homeScore: number | null;
     awayScore: number | null;
     status: string;
-    homeTeam: { name: string; code: string } | null;
-    awayTeam: { name: string; code: string } | null;
+    homeTeam: { name: string; code: string; flagUrl: string | null } | null;
+    awayTeam: { name: string; code: string; flagUrl: string | null } | null;
   };
   prediction?: {
     homeScore: number;
@@ -63,13 +63,22 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
           </div>
 
           <div className="flex items-center justify-between gap-2">
-            <div className="flex-1 text-right">
-              <p className="font-semibold text-sm">
-                {match.homeTeam?.name ?? "Por definir"}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {match.homeTeam?.code ?? "TBD"}
-              </p>
+            <div className="flex-1 flex items-center justify-end gap-2">
+              <div className="text-right">
+                <p className="font-semibold text-sm">
+                  {match.homeTeam?.name ?? "Por definir"}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {match.homeTeam?.code ?? "TBD"}
+                </p>
+              </div>
+              {match.homeTeam?.flagUrl && (
+                <img
+                  src={match.homeTeam.flagUrl}
+                  alt={match.homeTeam.code}
+                  className="w-8 h-6 object-cover rounded-sm shadow-sm"
+                />
+              )}
             </div>
 
             <div className="px-3 py-1 rounded-md bg-blue-50 text-center min-w-[60px]">
@@ -82,13 +91,22 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
               )}
             </div>
 
-            <div className="flex-1 text-left">
-              <p className="font-semibold text-sm">
-                {match.awayTeam?.name ?? "Por definir"}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {match.awayTeam?.code ?? "TBD"}
-              </p>
+            <div className="flex-1 flex items-center gap-2">
+              {match.awayTeam?.flagUrl && (
+                <img
+                  src={match.awayTeam.flagUrl}
+                  alt={match.awayTeam.code}
+                  className="w-8 h-6 object-cover rounded-sm shadow-sm"
+                />
+              )}
+              <div className="text-left">
+                <p className="font-semibold text-sm">
+                  {match.awayTeam?.name ?? "Por definir"}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {match.awayTeam?.code ?? "TBD"}
+                </p>
+              </div>
             </div>
           </div>
 

@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { useSession, signIn, signOut } from "next-auth/react";
+import logo from "@/assets/Logo-Base-Blanco.png";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -43,7 +45,8 @@ export function Navbar() {
               </svg>
             </button>
           )}
-          <Link href="/" className="text-xl font-bold tracking-tight text-white">
+          <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight text-white">
+            <Image src={logo} alt="Logo" className="h-8 w-auto -mt-4" />
             Mundial 2026
           </Link>
           {session && (
