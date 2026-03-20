@@ -1,24 +1,149 @@
 "use client";
 
+import { useState } from "react";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
 
 export default function SignInPage() {
+  const router = useRouter();
+  const [isRegister, setIsRegister] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", password: "" });
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      if (isRegister) {
+        const res = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          toast.error(data.error ?? "Error al registrarse");
+          setLoading(false);
+          return;
+        }
+
+        toast.success("Cuenta creada. Iniciando sesion...");
+      }
+
+      const result = await signIn("credentials", {
+        email: form.email,
+        password: form.password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        toast.error("Correo o contraseña incorrectos");
+        setLoading(false);
+        return;
+      }
+
+      router.push("/matches");
+    } catch {
+      toast.error("Error de conexion");
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] px-4">
       <Card className="w-full max-w-sm border-blue-100">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl text-blue-900">Iniciar sesion</CardTitle>
+          <CardTitle className="text-2xl text-blue-900">
+            {isRegister ? "Crear cuenta" : "Iniciar sesión"}
+          </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Inicia sesion para hacer tus predicciones
+            {isRegister
+              ? "Registrate para hacer tus predicciones"
+              : "Inicia sesion para hacer tus predicciones"}
           </p>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3">
+            {isRegister && (
+              <div className="space-y-1">
+                <Label htmlFor="name">Nombre</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Tu nombre"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                />
+              </div>
+            )}
+            <div className="space-y-1">
+              <Label htmlFor="email">Correo electronico</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="correo@ejemplo.com"
+                required
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="password">Contraseña</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                required
+                minLength={5}
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+              />
+            </div>
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-700 text-white hover:bg-blue-600"
+            >
+              {loading
+                ? "Cargando..."
+                : isRegister
+                ? "Registrarse"
+                : "Iniciar sesion"}
+            </Button>
+          </form>
+
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={() => setIsRegister(!isRegister)}
+              className="text-sm text-blue-600 hover:underline"
+            >
+              {isRegister
+                ? "Ya tienes cuenta? Inicia sesion"
+                : "No tienes cuenta? Registrate"}
+            </button>
+          </div>
+
+          <div className="relative">
+            <Separator />
+            {/* <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
+              o
+            </span> */}
+          </div>
+
           <Button
+            type="button"
             onClick={() => signIn("google", { callbackUrl: "/matches" })}
             variant="outline"
-            className="w-full h-12 text-base gap-3"
+            className="w-full h-11 gap-3 p-2"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24">
               <path
@@ -38,7 +163,7 @@ export default function SignInPage() {
                 fill="#EA4335"
               />
             </svg>
-            Continuar con Google
+            Iniciar con Google
           </Button>
         </CardContent>
       </Card>

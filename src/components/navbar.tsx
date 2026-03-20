@@ -124,13 +124,14 @@ export function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button
-              onClick={() => signIn("google")}
-              size="sm"
-              className="bg-blue-800 border-white border text-white hover:bg-blue-800 text-lg px-4 py-2"
-            >
-              Iniciar sesión
-            </Button>
+            <Link href="/sign-in">
+              <Button
+                size="sm"
+                className="bg-blue-900 border-white border text-white hover:bg-blue-800 text-base px-6 py-4"
+              >
+                Iniciar sesion
+              </Button>
+            </Link>
           )}
         </div>
       </div>
