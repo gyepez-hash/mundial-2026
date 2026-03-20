@@ -22,6 +22,11 @@ export default function ScoringPage() {
           setCorrectWinner(data.correctWinner.toString());
           setCorrectDraw(data.correctDraw.toString());
         }
+      })
+      .catch(() => {
+        toast.error("Error al cargar configuracion", {
+          description: "No se pudieron cargar los puntos actuales.",
+        });
       });
   }, []);
 
@@ -33,9 +38,9 @@ export default function ScoringPage() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          exactScore: parseInt(exactScore),
-          correctWinner: parseInt(correctWinner),
-          correctDraw: parseInt(correctDraw),
+          exactScore: parseInt(exactScore, 10),
+          correctWinner: parseInt(correctWinner, 10),
+          correctDraw: parseInt(correctDraw, 10),
         }),
       });
 

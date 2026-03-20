@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { STATUS_LABELS } from "@/lib/match-constants";
 
 interface MatchCardProps {
   match: {
@@ -51,12 +52,12 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
               )}
               {isFinished && (
                 <Badge variant="secondary" className="text-xs">
-                  Finalizado
+                  {STATUS_LABELS["finished"]}
                 </Badge>
               )}
               {isLocked && (
                 <Badge variant="destructive" className="text-xs">
-                  Bloqueado
+                  {STATUS_LABELS["locked"]}
                 </Badge>
               )}
             </div>

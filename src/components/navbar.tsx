@@ -69,6 +69,12 @@ export function Navbar() {
               >
                 Ranking
               </Link>
+              <Link
+                href="/rules"
+                className="text-sm text-blue-200 hover:text-white transition-colors"
+              >
+                Reglas
+              </Link>
               {session.user.role === "admin" && (
                 <Link
                   href="/admin"
@@ -112,6 +118,11 @@ export function Navbar() {
                 <DropdownMenuItem className="sm:hidden">
                   <Link href="/leaderboard" className="w-full">
                     Ranking
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="sm:hidden">
+                  <Link href="/rules" className="w-full">
+                    Reglas
                   </Link>
                 </DropdownMenuItem>
                 {session.user.role === "admin" && (

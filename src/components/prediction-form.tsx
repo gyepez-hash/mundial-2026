@@ -44,8 +44,8 @@ export function PredictionForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           matchId,
-          homeScore: parseInt(homeScore),
-          awayScore: parseInt(awayScore),
+          homeScore: parseInt(homeScore, 10),
+          awayScore: parseInt(awayScore, 10),
         }),
       });
 

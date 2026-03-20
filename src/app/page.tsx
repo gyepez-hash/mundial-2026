@@ -205,6 +205,15 @@ export default function HomePage() {
               Ver ranking
             </Button>
           </Link>
+          <Link href="/rules" className="action-btn opacity-0">
+            <Button
+              variant="outline"
+              size="lg"
+              className="w-full min-w-[160px] h-12 text-base"
+            >
+              Ver reglas
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

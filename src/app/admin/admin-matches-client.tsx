@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/table";
 import { toast } from "sonner";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { STAGE_LABELS, STATUS_LABELS } from "@/lib/match-constants";
 
 interface Match {
   id: string;
@@ -32,23 +33,10 @@ interface Match {
   awayTeam: { name: string; code: string; flagUrl: string | null } | null;
 }
 
-const STAGE_LABELS: Record<string, string> = {
-  group: "Fase de grupos",
-  round32: "32avos",
-  round16: "8vos",
-  quarter: "4tos",
-  semi: "Semifinal",
-  third: "3er lugar",
-  final: "Final",
-};
-
-const STATUS_LABELS: Record<string, string> = {
-  scheduled: "Programado",
-  locked: "Bloqueado",
-  finished: "Finalizado",
-};
-
 const PAGE_SIZE = 10;
+
+const selectClass =
+  "h-9 rounded-lg border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
 
 export function AdminMatchesClient({ matches }: { matches: Match[] }) {
   const [scores, setScores] = useState<
@@ -100,12 +88,15 @@ export function AdminMatchesClient({ matches }: { matches: Match[] }) {
   }, [matches, filterGroup, filterStage, filterStatus, search]);
 
   // Pagination
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const safePage = Math.min(page, totalPages);
-  const paginatedMatches = filtered.slice(
-    (safePage - 1) * PAGE_SIZE,
-    safePage * PAGE_SIZE
-  );
+  const { totalPages, safePage, paginatedMatches } = useMemo(() => {
+    const total = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+    const safe = Math.min(page, total);
+    return {
+      totalPages: total,
+      safePage: safe,
+      paginatedMatches: filtered.slice((safe - 1) * PAGE_SIZE, safe * PAGE_SIZE),
+    };
+  }, [filtered, page]);
 
   // Reset page when filters change
   function updateFilter(setter: (v: string) => void, value: string) {
@@ -147,8 +138,8 @@ export function AdminMatchesClient({ matches }: { matches: Match[] }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           matchId,
-          homeScore: parseInt(s.home),
-          awayScore: parseInt(s.away),
+          homeScore: parseInt(s.home, 10),
+          awayScore: parseInt(s.away, 10),
         }),
       });
 
@@ -198,9 +189,6 @@ export function AdminMatchesClient({ matches }: { matches: Match[] }) {
       setLoading(null);
     }
   }
-
-  const selectClass =
-    "h-9 rounded-lg border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
 
   return (
     <div className="space-y-4">
