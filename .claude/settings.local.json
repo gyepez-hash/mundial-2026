@@ -18,11 +18,21 @@
       "Bash(npx next:*)",
       "Bash(openssl rand:*)",
       "Bash(xargs grep:*)",
-      "Skill(update-config)"
+      "Skill(update-config)",
+      "Read(//c/Users/rodar/.claude/**)",
+      "Bash(npx -y @modelcontextprotocol/server-google-chrome --help)",
+      "Bash(npm search:*)",
+      "Bash(find /c/Projects/misrepos/mundial-2026/src -type f \\\\\\(-name *.ts -o -name *.tsx -o -name *.js -o -name *.jsx \\\\\\))",
+      "Bash(find /c/Projects/misrepos/mundial-2026/src -type f \\\\\\(-name *.ts -o -name *.tsx \\\\\\))",
+      "Bash(grep -r \"signIn\\\\|signOut\\\\|useSession\\\\|auth\\(\" /c/Projects/misrepos/mundial-2026/src --include=*.ts --include=*.tsx)",
+      "Bash(grep -r \"Account\\\\|Session\\\\|User\" /c/Projects/misrepos/mundial-2026/src --include=*.ts --include=*.tsx)",
+      "mcp__supabase__list_projects",
+      "mcp__supabase__execute_sql",
+      "Bash(ls -la /c/Projects/misrepos/mundial-2026/src/middleware.*)",
+      "Bash(grep -r \"headers\\(\\)\\\\|cookies\\(\\)\" /c/Projects/misrepos/mundial-2026/src/app/api --include=*.ts)",
+      "Bash(grep -r \"useSession\\\\|getSession\" /c/Projects/misrepos/mundial-2026/src --include=*.ts --include=*.tsx)"
     ]
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": [
-    "supabase"
-  ]
+  "enabledMcpjsonServers": []
 }
