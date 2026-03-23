@@ -6,7 +6,20 @@
       "Bash(npm install:*)",
       "Bash(grep -r \"grupo\\\\|Grupo\\\\|fase\\\\|estado\\\\|stage\\\\|status\" C:Projectsmisreposmundial-2026srclib --include=*.ts)",
       "Bash(npx tsc:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(curl -v --connect-timeout 5 telnet://db.aeuhfqevgozafkqmtfer.supabase.co:5432)",
+      "Bash(claude mcp:*)",
+      "Bash(npx prisma:*)",
+      "Bash(curl:*)",
+      "Bash(DATABASE_URL=\"postgresql://postgres.aeuhfqevgozafkqmtfer:Ga03Briel09@aws-0-us-west-2.pooler.supabase.com:5432/postgres?sslmode=require&sslaccept=accept_invalid_certs\" DIRECT_URL=\"postgresql://postgres.aeuhfqevgozafkqmtfer:Ga03Briel09@aws-0-us-west-2.pooler.supabase.com:5432/postgres?sslmode=require&sslaccept=accept_invalid_certs\" npx prisma db push 2>&1)",
+      "Bash(nslookup:*)",
+      "Bash(npx tsx:*)",
+      "Bash(find C:Projectsmisreposmundial-2026 -type f \\\\\\(-name *.db -o -name *.sqlite -o -name *.sqlite3 -o -name .env* \\\\\\))",
+      "Bash(npx next:*)"
     ]
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "supabase"
+  ]
 }

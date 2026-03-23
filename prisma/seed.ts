@@ -1,13 +1,15 @@
 import { config } from "dotenv";
 config();
 
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
-
 async function createPrisma() {
+  const { PrismaPg } = await import("@prisma/adapter-pg");
   const { PrismaClient } = await import("../src/generated/prisma/client.js");
-  const adapter = new PrismaBetterSqlite3({
-    url: process.env.DATABASE_URL ?? "file:./dev.db",
+  const pg = await import("pg");
+  const pool = new pg.Pool({
+    connectionString: process.env.DATABASE_URL!,
+    ssl: { rejectUnauthorized: false },
   });
+  const adapter = new PrismaPg(pool);
   return new PrismaClient({ adapter });
 }
 
