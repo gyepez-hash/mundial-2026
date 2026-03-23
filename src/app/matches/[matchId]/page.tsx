@@ -1,8 +1,37 @@
+import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { PredictionForm } from "@/components/prediction-form";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ matchId: string }>;
+}): Promise<Metadata> {
+  const { matchId } = await params;
+  const match = await prisma.match.findUnique({
+    where: { id: matchId },
+    include: { homeTeam: true, awayTeam: true },
+  });
+
+  if (!match) return { title: "Partido no encontrado" };
+
+  const home = match.homeTeam?.name ?? "Por definir";
+  const away = match.awayTeam?.name ?? "Por definir";
+  const title = `${home} vs ${away}`;
+  const description = `Partido #${match.matchNumber} del Mundial 2026. ${home} vs ${away} en ${match.venue}. Haz tu prediccion y acumula puntos.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: `${title} — Quiniela Mundial 2026`,
+      description,
+    },
+  };
+}
 
 export default async function MatchDetailPage({
   params,

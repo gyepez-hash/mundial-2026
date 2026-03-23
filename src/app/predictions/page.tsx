@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -10,6 +11,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+
+export const metadata: Metadata = {
+  title: "Mis Predicciones",
+  description:
+    "Revisa todas tus predicciones del Mundial 2026, los puntos obtenidos por partido y tu puntaje total acumulado.",
+  robots: { index: false },
+};
 
 export default async function PredictionsPage() {
   const session = await auth();

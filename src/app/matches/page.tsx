@@ -1,7 +1,19 @@
+import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { MatchCard } from "@/components/match-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+export const metadata: Metadata = {
+  title: "Partidos",
+  description:
+    "Consulta los 104 partidos del Mundial 2026: fase de grupos, octavos, cuartos, semifinales y la gran final. Haz tus predicciones antes de que cierren.",
+  openGraph: {
+    title: "Partidos — Quiniela Mundial 2026",
+    description:
+      "Todos los partidos del Mundial 2026. Predice marcadores y acumula puntos.",
+  },
+};
 
 export default async function MatchesPage() {
   const session = await auth();

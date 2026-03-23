@@ -15,7 +15,9 @@
       "Bash(nslookup:*)",
       "Bash(npx tsx:*)",
       "Bash(find C:Projectsmisreposmundial-2026 -type f \\\\\\(-name *.db -o -name *.sqlite -o -name *.sqlite3 -o -name .env* \\\\\\))",
-      "Bash(npx next:*)"
+      "Bash(npx next:*)",
+      "Bash(openssl rand:*)",
+      "Bash(xargs grep:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
