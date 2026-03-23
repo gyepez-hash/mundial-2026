@@ -1,5 +1,17 @@
 @AGENTS.md
 
+# Error Documentation Rule (MANDATORY)
+
+When you encounter an error during implementation (build failure, runtime error, wrong API usage, type error, etc.) and find the fix:
+
+1. **Document it immediately** in the relevant section of this file (or create a new section if needed).
+2. Format: describe the error, WHY it happens, and the correct approach.
+3. If the error is specific to a library/tool, group it under that library's section.
+4. Do NOT wait until the end — document as soon as you fix the error.
+5. Keep entries concise: one error = 1-2 lines max.
+
+This prevents repeating the same mistakes across sessions.
+
 # Supabase / Database Connection
 
 ## Connection Details
