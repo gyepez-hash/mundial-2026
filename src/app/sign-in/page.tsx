@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 
@@ -187,17 +187,17 @@ export default function SignInPage() {
   };
 
   const descriptions: Record<Mode, string> = {
-    signin: "Inicia sesion para hacer tus predicciones",
-    register: "Registrate para hacer tus predicciones",
+    signin: "Vuelve a la jugada y registra tus pronosticos.",
+    register: "Unete y compite por el primer lugar de la quiniela.",
     "set-password":
-      "Tu cuenta fue creada con Google. Establece una contrasena para poder iniciar sesion con email y contrasena.",
+      "Tu cuenta fue creada con Google. Establece una contrasena para iniciar sesion con email.",
     "forgot-password": "Ingresa tu correo para restablecer tu contraseña.",
     "reset-password": `Ingresa la nueva contraseña para ${form.email}`,
   };
 
   const buttonLabels: Record<Mode, string> = {
     signin: "Iniciar sesion",
-    register: "Registrarse",
+    register: "Crear cuenta",
     "set-password": "Guardar contrasena e iniciar sesion",
     "forgot-password": "Continuar",
     "reset-password": "Guardar contraseña e iniciar sesion",
@@ -209,67 +209,82 @@ export default function SignInPage() {
   const showBackLink = mode === "set-password" || mode === "forgot-password" || mode === "reset-password";
 
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] px-4">
-      <Card className="w-full max-w-sm border-blue-100">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl text-blue-900">
-            {titles[mode]}
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">{descriptions[mode]}</p>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <form onSubmit={handleSubmit} className="space-y-3">
+    <div className="grid lg:grid-cols-2 min-h-[calc(100vh-4rem)]">
+      {/* Left: brand panel — hidden on mobile */}
+      <aside
+        className="hidden lg:flex relative overflow-hidden  items-center justify-center p-6 xl:p-8"
+      >
+        {/* Decorative glow — softened */}
+        <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full " />
+        <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full" />
+
+        <div className="relative z-10 flex flex-col items-center gap-6 w-full max-w-[720px]">
+          <div className="relative w-full max-w-[720px] aspect-video rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_20px_60px_-15px_rgba(72,125,251,0.4)]">
+            <Image
+              src="/Banner.jpeg"
+              alt="Mundial 2026"
+              fill
+              priority
+              sizes="(min-width: 1024px) 720px, 0px"
+              className="object-contain"
+            />
+          </div>
+        </div>
+      </aside>
+
+      {/* Right: form */}
+      <main className="flex items-center justify-center px-4 py-10 sm:py-16">
+        <div className="w-full max-w-md space-y-6 rounded-2xl border border-border/60 bg-card/40 p-6 sm:p-8 shadow-[0_8px_40px_-12px_rgba(72,125,251,0.25)] backdrop-blur-sm">
+          <header className="space-y-2">
+            <h1 className="text-display text-4xl text-white">
+              {titles[mode].toUpperCase()}
+            </h1>
+            <p className="text-sm text-white/70 leading-relaxed">
+              {descriptions[mode]}
+            </p>
+          </header>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
             {mode === "register" && (
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <Label htmlFor="name">Nombre</Label>
                 <Input
                   id="name"
                   type="text"
                   placeholder="Tu nombre"
+                  autoComplete="name"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                 />
               </div>
             )}
             {showEmailField && (
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <Label htmlFor="email">Correo electronico</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="correo@ejemplo.com"
+                  autoComplete="email"
                   required
                   value={form.email}
-                  onChange={(e) =>
-                    setForm({ ...form, email: e.target.value })
-                  }
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
                 />
               </div>
             )}
-            {mode === "set-password" && (
-              <div className="space-y-1">
+            {(mode === "set-password" || mode === "reset-password") && (
+              <div className="space-y-1.5">
                 <Label>Correo electronico</Label>
                 <Input
                   type="email"
                   value={form.email}
                   disabled
-                  className="bg-muted"
-                />
-              </div>
-            )}
-            {mode === "reset-password" && (
-              <div className="space-y-1">
-                <Label>Correo electronico</Label>
-                <Input
-                  type="email"
-                  value={form.email}
-                  disabled
-                  className="bg-muted"
+                  className="bg-muted opacity-70"
                 />
               </div>
             )}
             {showPasswordField && (
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <Label htmlFor="password">
                   {mode === "set-password" || mode === "reset-password"
                     ? "Nueva contraseña"
@@ -279,12 +294,15 @@ export default function SignInPage() {
                   id="password"
                   type="password"
                   placeholder="••••••••"
+                  autoComplete={
+                    mode === "register" || mode === "set-password" || mode === "reset-password"
+                      ? "new-password"
+                      : "current-password"
+                  }
                   required
                   minLength={mode === "set-password" || mode === "reset-password" ? 6 : 5}
                   value={form.password}
-                  onChange={(e) =>
-                    setForm({ ...form, password: e.target.value })
-                  }
+                  onChange={(e) => setForm({ ...form, password: e.target.value })}
                 />
                 {(mode === "set-password" || mode === "reset-password") && (
                   <p className="text-xs text-muted-foreground">
@@ -294,12 +312,13 @@ export default function SignInPage() {
               </div>
             )}
             {showConfirmField && (
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
                   placeholder="••••••••"
+                  autoComplete="new-password"
                   required
                   minLength={6}
                   value={form.confirmPassword}
@@ -311,8 +330,10 @@ export default function SignInPage() {
             )}
             <Button
               type="submit"
+              variant="accent"
+              size="lg"
               disabled={loading}
-              className="w-full bg-blue-700 text-white hover:bg-blue-600"
+              className="w-full h-11 text-base font-semibold"
             >
               {loading ? "Cargando..." : buttonLabels[mode]}
             </Button>
@@ -326,7 +347,7 @@ export default function SignInPage() {
                   setMode("signin");
                   setForm({ name: "", email: "", password: "", confirmPassword: "" });
                 }}
-                className="text-sm text-blue-600 hover:underline"
+                className="text-sm text-brand-electric hover:underline"
               >
                 Volver a iniciar sesion
               </button>
@@ -335,13 +356,11 @@ export default function SignInPage() {
 
           {(mode === "signin" || mode === "register") && (
             <>
-              <div className="flex flex-col items-center gap-1">
+              <div className="flex flex-col items-center gap-1.5">
                 <button
                   type="button"
-                  onClick={() =>
-                    setMode(mode === "register" ? "signin" : "register")
-                  }
-                  className="text-sm text-blue-600 hover:underline"
+                  onClick={() => setMode(mode === "register" ? "signin" : "register")}
+                  className="text-sm text-brand-electric hover:underline"
                 >
                   {mode === "register"
                     ? "Ya tienes cuenta? Inicia sesion"
@@ -354,24 +373,29 @@ export default function SignInPage() {
                       setMode("forgot-password");
                       setForm((prev) => ({ ...prev, password: "", confirmPassword: "" }));
                     }}
-                    className="text-sm text-muted-foreground hover:text-blue-600 hover:underline"
+                    className="text-xs text-white/50 hover:text-brand-electric hover:underline"
                   >
                     Olvidaste tu contraseña?
                   </button>
                 )}
               </div>
 
-              <div className="relative">
-                <Separator />
+              <div className="relative flex items-center gap-3" role="separator">
+                <Separator className="flex-1" />
+                <span className="text-[0.65rem] uppercase tracking-widest text-white/40 font-mono">
+                  o
+                </span>
+                <Separator className="flex-1" />
               </div>
 
               <Button
                 type="button"
                 onClick={() => signIn("google", { callbackUrl: "/matches" })}
                 variant="outline"
-                className="w-full h-11 gap-3 p-2"
+                size="lg"
+                className="w-full h-11 gap-3"
               >
-                <svg className="h-5 w-5" viewBox="0 0 24 24">
+                <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
                   <path
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
                     fill="#4285F4"
@@ -389,12 +413,12 @@ export default function SignInPage() {
                     fill="#EA4335"
                   />
                 </svg>
-                Iniciar con Google
+                Continuar con Google
               </Button>
             </>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </main>
     </div>
   );
 }

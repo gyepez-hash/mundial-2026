@@ -2,14 +2,24 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant light (&:is(.light *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
+  --font-heading: var(--font-display);
+
+  --color-brand-deep: var(--brand-deep);
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-electric: var(--brand-electric);
+  --color-accent-red: var(--accent-red);
+  --color-accent-orange: var(--accent-orange);
+  --color-accent-coral: var(--accent-coral);
+  --color-text-cream: var(--text-cream);
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -46,75 +56,100 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  --background-image-brand-gradient:
+    radial-gradient(at 20% 0%, #29113A 0%, transparent 55%),
+    radial-gradient(at 90% 100%, #040A47 0%, transparent 55%),
+    linear-gradient(180deg, #03032B 0%, #0F0F29 100%);
+  --background-image-electric-gradient:
+    linear-gradient(135deg, #487DFB 0%, #12143A 100%);
+  --background-image-fire-gradient:
+    linear-gradient(135deg, #6BB1E2 0%, #2D6CA1 100%);
 }
 
 :root {
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.195 0.03 255);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.195 0.03 255);
-  --primary: oklch(0.45 0.18 255);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.94 0.03 245);
-  --secondary-foreground: oklch(0.30 0.10 255);
-  --muted: oklch(0.96 0.015 245);
-  --muted-foreground: oklch(0.50 0.03 255);
-  --accent: oklch(0.92 0.04 245);
-  --accent-foreground: oklch(0.30 0.10 255);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.90 0.025 245);
-  --input: oklch(0.90 0.025 245);
-  --ring: oklch(0.55 0.15 255);
-  --chart-1: oklch(0.55 0.18 255);
-  --chart-2: oklch(0.60 0.15 235);
-  --chart-3: oklch(0.45 0.12 265);
-  --chart-4: oklch(0.70 0.10 220);
-  --chart-5: oklch(0.35 0.14 255);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0.005 245);
-  --sidebar-foreground: oklch(0.195 0.03 255);
-  --sidebar-primary: oklch(0.45 0.18 255);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.94 0.03 245);
-  --sidebar-accent-foreground: oklch(0.30 0.10 255);
-  --sidebar-border: oklch(0.90 0.025 245);
-  --sidebar-ring: oklch(0.55 0.15 255);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.195 0.03 255);
+  /* Brand tokens — extracted from NET1-PIEZA-MADRE-MUNDIAL.psb */
+  --brand-deep: #03032B;
+  --brand-navy: #12143A;
+  --brand-electric: #487DFB;
+  --accent-red: #D70C05;
+  --accent-orange: #6BB1E2;
+  --accent-coral: #FF9988;
+  --text-cream: #FFF9DB;
+
+  /* Default theme = DARK (the design is dark) */
+  --background: #03032B;
+  --foreground: #FFFFFF;
+
+  --card: #0F0F29;
+  --card-foreground: #FFFFFF;
+
+  --popover: #12143A;
+  --popover-foreground: #FFFFFF;
+
+  --primary: #487DFB;
+  --primary-foreground: #03032B;
+
+  --secondary: #12143A;
+  --secondary-foreground: #FFFFFF;
+
+  --muted: #0F0F29;
+  --muted-foreground: #DBD7D6;
+
+  --accent: #6BB1E2;
+  --accent-foreground: #03032B;
+
+  --destructive: #D70C05;
+
+  --border: rgba(72, 125, 251, 0.18);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: #487DFB;
+
+  --chart-1: #487DFB;
+  --chart-2: #6BB1E2;
+  --chart-3: #D70C05;
+  --chart-4: #FF9988;
+  --chart-5: #FFF9DB;
+
+  --radius: 0.75rem;
+
+  --sidebar: #0F0F29;
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #487DFB;
+  --sidebar-primary-foreground: #03032B;
+  --sidebar-accent: #12143A;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: rgba(72, 125, 251, 0.18);
+  --sidebar-ring: #487DFB;
 }
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+.light {
+  --background: #FFFFFF;
+  --foreground: #03032B;
+  --card: #FFFFFF;
+  --card-foreground: #03032B;
+  --popover: #FFFFFF;
+  --popover-foreground: #03032B;
+  --primary: #12143A;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F2F4FB;
+  --secondary-foreground: #12143A;
+  --muted: #F2F4FB;
+  --muted-foreground: #4B5275;
+  --accent: #6BB1E2;
+  --accent-foreground: #03032B;
+  --destructive: #D70C05;
+  --border: rgba(18, 20, 58, 0.12);
+  --input: rgba(18, 20, 58, 0.08);
+  --ring: #487DFB;
+  --sidebar: #F2F4FB;
+  --sidebar-foreground: #12143A;
+  --sidebar-primary: #12143A;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #FFFFFF;
+  --sidebar-accent-foreground: #12143A;
+  --sidebar-border: rgba(18, 20, 58, 0.12);
+  --sidebar-ring: #487DFB;
 }
 
 @layer base {
@@ -123,9 +158,17 @@
   }
   body {
     @apply bg-background text-foreground;
+    background-image: var(--background-image-brand-gradient);
+    background-attachment: fixed;
+    background-size: cover;
   }
   html {
     @apply font-sans;
+  }
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.02em;
   }
   a,
   button,
@@ -135,5 +178,38 @@
   select,
   summary {
     cursor: pointer;
+  }
+  ::selection {
+    background-color: var(--brand-electric);
+    color: var(--brand-deep);
+  }
+}
+
+@layer utilities {
+  .text-display {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-style: italic;
+    letter-spacing: -0.03em;
+    line-height: 0.95;
+  }
+  .bg-brand-gradient {
+    background-image: var(--background-image-brand-gradient);
+  }
+  .bg-electric-gradient {
+    background-image: var(--background-image-electric-gradient);
+  }
+  .bg-fire-gradient {
+    background-image: var(--background-image-fire-gradient);
+  }
+  .text-fire-gradient {
+    background-image: var(--background-image-fire-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .border-brand-glow {
+    border-color: rgba(72, 125, 251, 0.4);
+    box-shadow: 0 0 0 1px rgba(72, 125, 251, 0.15), 0 8px 32px rgba(72, 125, 251, 0.08);
   }
 }

@@ -3,8 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import logo from "@/assets/Logo-Base-Blanco.png";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -20,14 +21,24 @@ export function Navbar() {
   const pathname = usePathname();
   const showBack = pathname !== "/";
 
+  const navLinks = [
+    { href: "/matches", label: "Partidos" },
+    { href: "/predictions", label: "Mis Predicciones" },
+    { href: "/leaderboard", label: "Ranking" },
+    { href: "/rules", label: "Reglas" },
+  ];
+
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(`${href}/`);
+
   return (
-    <nav className="border-b border-blue-800 bg-blue-900 text-white">
-      <div className="mx-auto max-w-6xl flex items-center justify-between px-4 h-16">
+    <nav className="sticky top-0 z-40 border-b border-border/40 bg-brand-navy/80 text-foreground backdrop-blur-md supports-[backdrop-filter]:bg-brand-navy/70">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <div className="flex items-center gap-6">
           {showBack && (
             <button
               onClick={() => router.back()}
-              className="text-blue-200 hover:text-white transition-colors"
+              className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
               aria-label="Volver"
             >
               <svg
@@ -45,40 +56,45 @@ export function Navbar() {
               </svg>
             </button>
           )}
-          <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight text-white">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-xl tracking-tight text-foreground"
+          >
             <Image src={logo} alt="Logo" className="h-8 w-auto -mt-4" />
-            Mundial 2026
+            <span className="text-display text-lg uppercase leading-none">
+              Mundial 2026
+            </span>
           </Link>
           {session && (
-            <div className="hidden sm:flex items-center gap-4">
-              <Link
-                href="/matches"
-                className="text-sm text-blue-200 hover:text-white transition-colors"
-              >
-                Partidos
-              </Link>
-              <Link
-                href="/predictions"
-                className="text-sm text-blue-200 hover:text-white transition-colors"
-              >
-                Mis Predicciones
-              </Link>
-              <Link
-                href="/leaderboard"
-                className="text-sm text-blue-200 hover:text-white transition-colors"
-              >
-                Ranking
-              </Link>
-              <Link
-                href="/rules"
-                className="text-sm text-blue-200 hover:text-white transition-colors"
-              >
-                Reglas
-              </Link>
+            <div className="hidden items-center gap-1 sm:flex">
+              {navLinks.map((link) => {
+                const active = isActive(link.href);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={cn(
+                      "relative rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                      active
+                        ? "text-foreground"
+                        : "text-muted-foreground hover:text-foreground",
+                      "after:absolute after:inset-x-3 after:-bottom-[18px] after:h-[2px] after:rounded-full after:bg-primary after:transition-opacity",
+                      active ? "after:opacity-100" : "after:opacity-0"
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
               {session.user.role === "admin" && (
                 <Link
                   href="/admin"
-                  className="text-sm text-blue-200 hover:text-white transition-colors"
+                  className={cn(
+                    "relative rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                    isActive("/admin")
+                      ? "text-accent"
+                      : "text-accent/80 hover:text-accent"
+                  )}
                 >
                   Admin
                 </Link>
@@ -90,8 +106,8 @@ export function Navbar() {
         <div>
           {session ? (
             <DropdownMenu>
-              <DropdownMenuTrigger className="relative h-8 w-8 rounded-full outline-none">
-                <Avatar className="h-8 w-8">
+              <DropdownMenuTrigger className="relative h-9 w-9 rounded-full outline-none ring-1 ring-border/60 transition-shadow hover:ring-primary/60 focus-visible:ring-2 focus-visible:ring-ring/60">
+                <Avatar className="h-9 w-9">
                   <AvatarImage
                     src={session.user.image ?? ""}
                     alt={session.user.name ?? ""}
@@ -139,10 +155,7 @@ export function Navbar() {
             </DropdownMenu>
           ) : (
             <Link href="/sign-in">
-              <Button
-                size="sm"
-                className="bg-blue-900 border-white border text-white hover:bg-blue-800 text-base px-6 py-4"
-              >
+              <Button size="lg" variant="accent" className="px-5">
                 Iniciar sesion
               </Button>
             </Link>

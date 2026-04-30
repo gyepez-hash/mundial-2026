@@ -33,17 +33,17 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }}
       toastOptions={{
         classNames: {
-          toast: "cn-toast !py-4 !px-5 !text-sm !font-medium !shadow-lg !border-l-4",
+          toast: "cn-toast !py-4 !px-5 !text-sm !font-medium !shadow-lg !border-l-4 !bg-popover !text-popover-foreground !border-border",
           success:
-            "!bg-emerald-50 !text-emerald-900 !border-l-emerald-500 !border-emerald-200 dark:!bg-emerald-950 dark:!text-emerald-100 dark:!border-emerald-700 dark:!border-l-emerald-400",
+            "!border-l-accent",
           error:
-            "!bg-red-50 !text-red-900 !border-l-red-500 !border-red-200 dark:!bg-red-950 dark:!text-red-100 dark:!border-red-700 dark:!border-l-red-400",
+            "!border-l-destructive",
           warning:
-            "!bg-amber-50 !text-amber-900 !border-l-amber-500 !border-amber-200 dark:!bg-amber-950 dark:!text-amber-100 dark:!border-amber-700 dark:!border-l-amber-400",
+            "!border-l-accent-coral",
           info:
-            "!bg-blue-50 !text-blue-900 !border-l-blue-500 !border-blue-200 dark:!bg-blue-950 dark:!text-blue-100 dark:!border-blue-700 dark:!border-l-blue-400",
+            "!border-l-primary",
           title: "!text-sm !font-semibold",
-          description: "!text-xs !text-gray-500 dark:!text-gray-400",
+          description: "!text-xs !text-muted-foreground",
         },
       }}
       style={

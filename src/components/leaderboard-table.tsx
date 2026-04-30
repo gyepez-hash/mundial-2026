@@ -1,6 +1,3 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -10,40 +7,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+import type { LeaderboardUser } from "@/lib/leaderboard";
 
-interface LeaderboardUser {
-  rank: number;
-  id: string;
-  name: string | null;
-  image: string | null;
-  totalPoints: number;
-  totalPredictions: number;
-}
-
-export function LeaderboardTable() {
-  const [users, setUsers] = useState<LeaderboardUser[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch("/api/leaderboard")
-      .then((res) => res.json())
-      .then((data) => {
-        setUsers(data);
-        setLoading(false);
-      });
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="space-y-3">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="h-12 w-full" />
-        ))}
-      </div>
-    );
-  }
-
+export function LeaderboardTable({ users }: { users: LeaderboardUser[] }) {
   if (users.length === 0) {
     return (
       <p className="text-center text-muted-foreground py-8">
@@ -52,11 +19,28 @@ export function LeaderboardTable() {
     );
   }
 
+  const rankRowStyles = (rank: number) => {
+    if (rank === 1)
+      return "bg-accent/10 ring-1 ring-inset ring-accent/30 hover:bg-accent/15";
+    if (rank === 2)
+      return "bg-primary/10 ring-1 ring-inset ring-primary/30 hover:bg-primary/15";
+    if (rank === 3)
+      return "bg-accent-coral/10 ring-1 ring-inset ring-accent-coral/30 hover:bg-accent-coral/15";
+    return "";
+  };
+
+  const rankNumberStyles = (rank: number) => {
+    if (rank === 1) return "text-fire-gradient";
+    if (rank === 2) return "text-primary";
+    if (rank === 3) return "text-accent-coral";
+    return "text-muted-foreground";
+  };
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-16">#</TableHead>
+          <TableHead className="w-20">#</TableHead>
           <TableHead>Jugador</TableHead>
           <TableHead className="text-right">Predicciones</TableHead>
           <TableHead className="text-right">Puntos</TableHead>
@@ -64,32 +48,44 @@ export function LeaderboardTable() {
       </TableHeader>
       <TableBody>
         {users.map((user) => (
-          <TableRow key={user.id}>
-            <TableCell className="font-bold">
-              {user.rank <= 3 ? (
-                <span className="text-lg">
-                  {user.rank === 1 ? "🥇" : user.rank === 2 ? "🥈" : "🥉"}
-                </span>
-              ) : (
-                user.rank
-              )}
+          <TableRow key={user.id} className={cn(rankRowStyles(user.rank))}>
+            <TableCell>
+              <span
+                className={cn(
+                  "text-display text-2xl leading-none",
+                  rankNumberStyles(user.rank)
+                )}
+              >
+                {user.rank}
+              </span>
             </TableCell>
             <TableCell>
-              <div className="flex items-center gap-2">
-                <Avatar className="h-7 w-7">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-8 w-8">
                   <AvatarImage src={user.image ?? ""} />
                   <AvatarFallback className="text-xs">
                     {user.name?.charAt(0)?.toUpperCase() ?? "U"}
                   </AvatarFallback>
                 </Avatar>
-                <span className="font-medium text-sm">
+                <span className="text-sm font-medium text-foreground">
                   {user.name ?? "Anonimo"}
                 </span>
               </div>
             </TableCell>
-            <TableCell className="text-right">{user.totalPredictions}</TableCell>
-            <TableCell className="text-right font-bold">
-              {user.totalPoints}
+            <TableCell className="text-right tabular-nums text-muted-foreground">
+              {user.totalPredictions}
+            </TableCell>
+            <TableCell className="text-right">
+              <span
+                className={cn(
+                  "text-display text-xl tabular-nums",
+                  user.rank === 1
+                    ? "text-fire-gradient"
+                    : "text-foreground"
+                )}
+              >
+                {user.totalPoints}
+              </span>
             </TableCell>
           </TableRow>
         ))}

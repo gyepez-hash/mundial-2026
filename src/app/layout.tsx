@@ -1,18 +1,28 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Outfit, Archivo, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { Navbar } from "@/components/navbar";
 import { Toaster } from "@/components/ui/sonner";
 import { StructuredData } from "@/components/structured-data";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Body / UI font — geometric sans, Albula Pro alternative
+const outfit = Outfit({
+  variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// Display font — heavy italic for impact headlines (Albula Pro ExtraBold Oblique replacement)
+const archivo = Archivo({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["800", "900"],
+  style: ["italic", "normal"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
 });
 
@@ -65,9 +75,9 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${outfit.variable} ${archivo.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-[family-name:var(--font-geist-sans)]">
+      <body className="min-h-full flex flex-col font-sans">
         <StructuredData />
         <Providers>
           <Navbar />

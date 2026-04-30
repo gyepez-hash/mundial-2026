@@ -36,7 +36,7 @@ interface Match {
 const PAGE_SIZE = 10;
 
 const selectClass =
-  "h-9 rounded-lg border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
+  "h-9 rounded-lg border border-input bg-secondary text-foreground px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 [&>option]:bg-secondary [&>option]:text-foreground";
 
 export function AdminMatchesClient({ matches }: { matches: Match[] }) {
   const [scores, setScores] = useState<
@@ -193,10 +193,10 @@ export function AdminMatchesClient({ matches }: { matches: Match[] }) {
   return (
     <div className="space-y-4">
       {/* Filters */}
-      <div className="flex flex-wrap items-end gap-3 rounded-xl border bg-muted/40 p-4">
+      <div className="flex flex-wrap items-end gap-3 rounded-xl border border-brand-electric/15 bg-card/70 p-4">
         {/* Search */}
         <div className="flex-1 min-w-[200px]">
-          <label className="text-xs font-medium text-muted-foreground mb-1 block">
+          <label className="text-[0.65rem] font-mono uppercase tracking-widest text-brand-electric mb-1.5 block">
             Buscar
           </label>
           <div className="relative">
@@ -212,7 +212,7 @@ export function AdminMatchesClient({ matches }: { matches: Match[] }) {
 
         {/* Group */}
         <div>
-          <label className="text-xs font-medium text-muted-foreground mb-1 block">
+          <label className="text-[0.65rem] font-mono uppercase tracking-widest text-brand-electric mb-1.5 block">
             Grupo
           </label>
           <select
@@ -231,7 +231,7 @@ export function AdminMatchesClient({ matches }: { matches: Match[] }) {
 
         {/* Stage */}
         <div>
-          <label className="text-xs font-medium text-muted-foreground mb-1 block">
+          <label className="text-[0.65rem] font-mono uppercase tracking-widest text-brand-electric mb-1.5 block">
             Fase
           </label>
           <select
@@ -250,7 +250,7 @@ export function AdminMatchesClient({ matches }: { matches: Match[] }) {
 
         {/* Status */}
         <div>
-          <label className="text-xs font-medium text-muted-foreground mb-1 block">
+          <label className="text-[0.65rem] font-mono uppercase tracking-widest text-brand-electric mb-1.5 block">
             Estado
           </label>
           <select
@@ -282,7 +282,7 @@ export function AdminMatchesClient({ matches }: { matches: Match[] }) {
       </p>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-xl border">
+      <div className="overflow-x-auto rounded-xl border border-brand-electric/15 bg-card/60">
         <Table>
           <TableHeader>
             <TableRow>
@@ -354,7 +354,7 @@ export function AdminMatchesClient({ matches }: { matches: Match[] }) {
                     </TableCell>
                     <TableCell>
                       {match.status === "finished" ? (
-                        <span className="font-bold">
+                        <span className="font-display text-lg text-fire-gradient tabular-nums">
                           {match.homeScore} - {match.awayScore}
                         </span>
                       ) : (
@@ -389,6 +389,7 @@ export function AdminMatchesClient({ matches }: { matches: Match[] }) {
                           <>
                             <Button
                               size="sm"
+                              variant="accent"
                               onClick={() => handleSaveResult(match.id)}
                               disabled={loading === match.id}
                             >

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { calculatePoints } from "@/lib/scoring";
@@ -44,6 +45,9 @@ export async function POST(req: NextRequest) {
       data: { points },
     });
   }
+
+  revalidatePath("/leaderboard");
+  revalidatePath("/api/leaderboard");
 
   return NextResponse.json({ success: true, scored: predictions.length });
 }

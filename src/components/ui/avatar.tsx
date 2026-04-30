@@ -25,10 +25,15 @@ function Avatar({
   )
 }
 
-function AvatarImage({ className, ...props }: AvatarPrimitive.Image.Props) {
+function AvatarImage({
+  className,
+  referrerPolicy = "no-referrer",
+  ...props
+}: AvatarPrimitive.Image.Props) {
   return (
     <AvatarPrimitive.Image
       data-slot="avatar-image"
+      referrerPolicy={referrerPolicy}
       className={cn(
         "aspect-square size-full rounded-full object-cover",
         className
@@ -46,7 +51,7 @@ function AvatarFallback({
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
       className={cn(
-        "flex size-full items-center justify-center rounded-full bg-muted text-sm text-muted-foreground group-data-[size=sm]/avatar:text-xs",
+        "flex size-full items-center justify-center rounded-full bg-secondary text-sm font-semibold text-foreground group-data-[size=sm]/avatar:text-xs",
         className
       )}
       {...props}

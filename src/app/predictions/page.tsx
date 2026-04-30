@@ -1,16 +1,12 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { MatchCard } from "@/components/match-card";
+import { STAGE_LABELS } from "@/lib/match-constants";
 
 export const metadata: Metadata = {
   title: "Mis Predicciones",
@@ -18,6 +14,8 @@ export const metadata: Metadata = {
     "Revisa todas tus predicciones del Mundial 2026, los puntos obtenidos por partido y tu puntaje total acumulado.",
   robots: { index: false },
 };
+
+const STAGE_ORDER = ["group", "round32", "round16", "quarter", "semi", "third", "final"];
 
 export default async function PredictionsPage() {
   const session = await auth();
@@ -33,73 +31,143 @@ export default async function PredictionsPage() {
     orderBy: { match: { matchNumber: "asc" } },
   });
 
-  const totalPoints = predictions.reduce(
-    (sum, p) => sum + (p.points ?? 0),
-    0
-  );
+  const totalPoints = predictions.reduce((sum, p) => sum + (p.points ?? 0), 0);
+  const scored = predictions.filter((p) => p.points !== null).length;
+  const exactHits = predictions.filter((p) => (p.points ?? 0) >= 5).length;
+  const totalCount = predictions.length;
+
+  // Group predictions by stage / group
+  const grouped = new Map<string, typeof predictions>();
+  for (const pred of predictions) {
+    const key = pred.match.group
+      ? `Grupo ${pred.match.group}`
+      : (STAGE_LABELS[pred.match.stage] ?? pred.match.stage);
+    const arr = grouped.get(key) ?? [];
+    arr.push(pred);
+    grouped.set(key, arr);
+  }
+
+  // Sort sections: groups A..H first, then knockout stages in order
+  const sortedSections = Array.from(grouped.entries()).sort(([a], [b]) => {
+    const aIsGroup = a.startsWith("Grupo");
+    const bIsGroup = b.startsWith("Grupo");
+    if (aIsGroup && !bIsGroup) return -1;
+    if (!aIsGroup && bIsGroup) return 1;
+    if (aIsGroup && bIsGroup) return a.localeCompare(b);
+    // knockout: order by STAGE_ORDER label
+    const aIdx = STAGE_ORDER.findIndex((s) => STAGE_LABELS[s] === a);
+    const bIdx = STAGE_ORDER.findIndex((s) => STAGE_LABELS[s] === b);
+    return aIdx - bIdx;
+  });
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-blue-900">Mis Predicciones</h1>
-        <div className="text-right">
-          <p className="text-sm text-muted-foreground">Total</p>
-          <p className="text-2xl font-bold">{totalPoints} pts</p>
+    <div className="mx-auto max-w-6xl px-4 py-8 sm:py-10 space-y-8">
+      {/* Header */}
+      <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div className="space-y-1">
+          <p className="text-xs uppercase tracking-[0.25em] text-brand-electric font-mono">
+            Tu quiniela
+          </p>
+          <h1 className="text-display text-4xl sm:text-6xl text-white">
+            MIS PREDICCIONES
+          </h1>
         </div>
-      </div>
 
+        {totalCount > 0 && (
+          <div className="grid grid-cols-3 gap-3 sm:gap-4 sm:min-w-[420px]">
+            <StatTile label="Total" value={String(totalPoints)} accent />
+            <StatTile label="Calificadas" value={`${scored}/${totalCount}`} />
+            <StatTile label="Exactos" value={String(exactHits)} />
+          </div>
+        )}
+      </header>
+
+      {/* Empty state */}
       {predictions.length === 0 ? (
-        <p className="text-center text-muted-foreground py-12">
-          Aun no has hecho predicciones. Ve a la seccion de partidos para
-          comenzar.
-        </p>
+        <Card className="border-brand-electric/20 bg-card/60">
+          <CardContent className="py-16 text-center space-y-4">
+            <p className="text-display text-3xl text-fire-gradient">SIN PRONOSTICOS</p>
+            <p className="text-white/70 max-w-md mx-auto">
+              Aun no has hecho predicciones. Entra a la lista de partidos y marca
+              tus marcadores antes de que cierren.
+            </p>
+            <Link href="/matches" className="inline-block pt-2">
+              <Button variant="accent" size="lg" className="h-11 px-6">
+                Ir a partidos
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
       ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>#</TableHead>
-              <TableHead>Partido</TableHead>
-              <TableHead className="text-center">Tu prediccion</TableHead>
-              <TableHead className="text-center">Resultado</TableHead>
-              <TableHead className="text-right">Puntos</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {predictions.map((pred) => (
-              <TableRow key={pred.id}>
-                <TableCell className="text-muted-foreground">
-                  {pred.match.matchNumber}
-                </TableCell>
-                <TableCell className="font-medium">
-                  {pred.match.homeTeam?.code ?? "TBD"} vs{" "}
-                  {pred.match.awayTeam?.code ?? "TBD"}
-                </TableCell>
-                <TableCell className="text-center">
-                  {pred.homeScore} - {pred.awayScore}
-                </TableCell>
-                <TableCell className="text-center">
-                  {pred.match.status === "finished" ? (
-                    `${pred.match.homeScore} - ${pred.match.awayScore}`
-                  ) : (
-                    <span className="text-muted-foreground">Pendiente</span>
-                  )}
-                </TableCell>
-                <TableCell className="text-right">
-                  {pred.points !== null ? (
-                    <Badge
-                      variant={pred.points > 0 ? "default" : "secondary"}
-                    >
-                      {pred.points > 0 ? `+${pred.points}` : "0"}
-                    </Badge>
-                  ) : (
-                    <span className="text-muted-foreground">-</span>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <div className="space-y-10">
+          {sortedSections.map(([sectionTitle, sectionPredictions]) => (
+            <section key={sectionTitle} className="space-y-4">
+              <div className="flex items-center gap-3">
+                <h2 className="font-display text-xl sm:text-2xl text-white not-italic">
+                  {sectionTitle}
+                </h2>
+                <span className="text-xs text-white/50 font-mono">
+                  {sectionPredictions.length}{" "}
+                  {sectionPredictions.length === 1 ? "partido" : "partidos"}
+                </span>
+                <span className="flex-1 h-px bg-border" aria-hidden="true" />
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {sectionPredictions.map((pred) => (
+                  <MatchCard
+                    key={pred.id}
+                    match={{
+                      ...pred.match,
+                      dateTime: pred.match.dateTime.toISOString(),
+                    }}
+                    prediction={{
+                      homeScore: pred.homeScore,
+                      awayScore: pred.awayScore,
+                      points: pred.points,
+                    }}
+                  />
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
       )}
+    </div>
+  );
+}
+
+function StatTile({
+  label,
+  value,
+  accent,
+}: {
+  label: string;
+  value: string;
+  accent?: boolean;
+}) {
+  return (
+    <div
+      className={`rounded-xl border px-3 py-3 sm:px-4 sm:py-4 text-center ${
+        accent
+          ? "bg-fire-gradient border-transparent text-white"
+          : "bg-card/70 border-brand-electric/20"
+      }`}
+    >
+      <p
+        className={`text-display text-2xl sm:text-3xl leading-none ${
+          accent ? "text-white" : "text-white"
+        }`}
+      >
+        {value}
+      </p>
+      <p
+        className={`text-[0.6rem] sm:text-xs uppercase tracking-[0.2em] mt-1.5 font-mono ${
+          accent ? "text-white/80" : "text-brand-electric"
+        }`}
+      >
+        {label}
+      </p>
     </div>
   );
 }

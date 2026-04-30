@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useSyncExternalStore } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import gsap from "gsap";
 
 const WORLD_CUP_DATE = new Date("2026-06-11T00:00:00").getTime();
@@ -48,20 +50,17 @@ function useCountdown(): TimeLeft {
 }
 
 export default function HomePage() {
+  const { data: session } = useSession();
   const timeLeft = useCountdown();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const countdownRef = useRef<HTMLDivElement>(null);
-  const infoRef = useRef<HTMLParagraphElement>(null);
-  const buttonsRef = useRef<HTMLDivElement>(null);
   const particlesRef = useRef<HTMLDivElement>(null);
 
-  // GSAP animations
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Floating particles
       if (particlesRef.current) {
         const particles = particlesRef.current.children;
         Array.from(particles).forEach((particle) => {
@@ -85,56 +84,50 @@ export default function HomePage() {
 
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      // Title: scale up with bounce
       tl.fromTo(
         titleRef.current,
-        { opacity: 0, scale: 0.5, y: 40 },
-        { opacity: 1, scale: 1, y: 0, duration: 0.8, ease: "back.out(1.7)" }
+        { opacity: 0, scale: 0.7, y: 30 },
+        { opacity: 1, scale: 1, y: 0, duration: 0.9, ease: "back.out(1.6)" }
       );
 
-      // Subtitle: slide in from left
       tl.fromTo(
         subtitleRef.current,
-        { opacity: 0, x: -60 },
-        { opacity: 1, x: 0, duration: 0.6 },
-        "-=0.3"
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.5 },
+        "-=0.4"
       );
 
-      // Countdown cards: stagger from below
       tl.fromTo(
         ".countdown-item",
-        { opacity: 0, y: 60, scale: 0.8 },
+        { opacity: 0, y: 30, scale: 0.85 },
         {
           opacity: 1,
           y: 0,
           scale: 1,
-          duration: 0.5,
-          stagger: 0.1,
+          duration: 0.45,
+          stagger: 0.08,
           ease: "back.out(1.4)",
         },
         "-=0.2"
       );
 
-      // Info text: fade in
-      tl.fromTo(
-        infoRef.current,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.5 },
-        "-=0.1"
-      );
-
-      // Buttons: slide up with stagger
       tl.fromTo(
         ".action-btn",
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.5, stagger: 0.15 },
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.4, stagger: 0.1 },
         "-=0.2"
       );
 
-      // Continuous pulse on countdown
+      tl.fromTo(
+        ".feature-card",
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.1 },
+        "-=0.1"
+      );
+
       gsap.to(countdownRef.current, {
-        boxShadow: "0 0 40px rgba(29, 78, 216, 0.3)",
-        duration: 1.5,
+        boxShadow: "0 0 60px rgba(72, 125, 251, 0.35)",
+        duration: 1.8,
         repeat: -1,
         yoyo: true,
         ease: "sine.inOut",
@@ -145,105 +138,180 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div
-      ref={containerRef}
-      className="relative flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] px-4 overflow-hidden"
-    >
+    <div ref={containerRef} className="relative overflow-hidden">
       {/* Floating particles */}
-      <div ref={particlesRef} className="absolute inset-0 pointer-events-none">
-        {Array.from({ length: 15 }).map((_, i) => (
+      <div ref={particlesRef} className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        {Array.from({ length: 18 }).map((_, i) => (
           <div
             key={i}
-            className="absolute w-2 h-2 rounded-full bg-blue-400/30"
+            className="absolute w-1.5 h-1.5 rounded-full bg-brand-electric/40"
           />
         ))}
       </div>
 
-      <div className="text-center space-y-8 max-w-lg relative z-10">
-        <h1
-          ref={titleRef}
-          className="text-5xl sm:text-7xl font-bold tracking-tight text-blue-900 opacity-0"
-        >
-          Mundial 2026
-        </h1>
-
-        <p
-          ref={subtitleRef}
-          className="text-xl sm:text-2xl text-blue-400 font-medium opacity-0"
-        >
-          Quiniela del Mundial de Futbol
-        </p>
-
-        <div
-          ref={countdownRef}
-          className="bg-gradient-to-br from-blue-900 to-blue-700 text-white rounded-2xl p-8 shadow-xl"
-        >
-          <p className="text-sm text-blue-200 uppercase tracking-widest mb-4">
-            Faltan
+      {/* Hero */}
+      <section className="relative z-10 mx-auto max-w-6xl px-4 pt-12 pb-16 sm:pt-20 sm:pb-24">
+        <div className="text-center space-y-6 sm:space-y-8 max-w-3xl mx-auto">
+          <p
+            ref={subtitleRef}
+            className="text-xs sm:text-sm uppercase tracking-[0.3em] text-brand-electric font-mono opacity-0"
+          >
+            Quiniela &middot; USA &middot; Mexico &middot; Canada
           </p>
-          <div className="flex justify-center gap-3 sm:gap-5">
-            <CountdownUnit value={timeLeft.days} label="Dias" />
-            <span className="text-3xl font-bold text-blue-300 self-start mt-1">
-              :
+
+          <h1
+            ref={titleRef}
+            className="text-display text-6xl sm:text-8xl lg:text-9xl text-white opacity-0 leading-[0.9]"
+          >
+            MUNDIAL <span className="text-fire-gradient">2026</span>
+          </h1>
+
+          <p className="text-lg sm:text-xl text-white/80 max-w-xl mx-auto leading-relaxed">
+            Predice los marcadores, compite contra tus amigos y se el primero en gritar{" "}
+            <span className="text-display not-italic font-display text-fire-gradient text-2xl sm:text-3xl align-baseline">
+              GOL
             </span>
-            <CountdownUnit value={timeLeft.hours} label="Horas" />
-            <span className="text-3xl font-bold text-blue-300 self-start mt-1">
-              :
-            </span>
-            <CountdownUnit value={timeLeft.minutes} label="Min" />
-            <span className="text-3xl font-bold text-blue-300 self-start mt-1">
-              :
-            </span>
-            <CountdownUnit value={timeLeft.seconds} label="Seg" />
+            .
+          </p>
+
+          {/* Countdown */}
+          <div
+            ref={countdownRef}
+            className="bg-card/80 backdrop-blur-md border border-brand-electric/20 rounded-2xl p-5 sm:p-6 max-w-lg mx-auto"
+          >
+            <p className="text-[0.65rem] sm:text-xs text-brand-electric uppercase tracking-[0.25em] mb-3 font-mono">
+              Arranca en
+            </p>
+            <div
+              role="timer"
+              aria-label="Cuenta regresiva al inicio del Mundial 2026"
+              className="flex items-end justify-center gap-2 sm:gap-3"
+            >
+              <CountdownUnit value={timeLeft.days} label="Dias" />
+              <CountdownSeparator />
+              <CountdownUnit value={timeLeft.hours} label="Horas" />
+              <CountdownSeparator />
+              <CountdownUnit value={timeLeft.minutes} label="Min" />
+              <CountdownSeparator />
+              <CountdownUnit value={timeLeft.seconds} label="Seg" />
+            </div>
+            <p className="text-[0.65rem] sm:text-xs text-white/50 mt-3 font-mono">
+              11 jun &mdash; 19 jul, 2026
+            </p>
+          </div>
+
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+            <Link href={session ? "/matches" : "/sign-in"} className="action-btn opacity-0">
+              <Button
+                variant="accent"
+                size="lg"
+                className="w-full sm:w-auto h-12 px-8 text-base font-semibold"
+              >
+                {session ? "Empezar a predecir" : "Empezar"}
+              </Button>
+            </Link>
+            <Link href="/leaderboard" className="action-btn opacity-0">
+              <Button
+                variant="outline"
+                size="lg"
+                className="w-full sm:w-auto h-12 px-8 text-base"
+              >
+                Ver ranking
+              </Button>
+            </Link>
           </div>
         </div>
+      </section>
 
-        <p ref={infoRef} className="text-blue-400 text-sm opacity-0">
-          11 de junio - 19 de julio, 2026 &middot; USA, Mexico y Canada
-        </p>
-
-        <div
-          ref={buttonsRef}
-          className="flex flex-col sm:flex-row gap-3 justify-center"
-        >
-          <Link href="/matches" className="action-btn opacity-0">
-            <Button size="lg" className="w-full min-w-[160px] h-12 text-base">
-              Ver partidos
-            </Button>
-          </Link>
-          <Link href="/leaderboard" className="action-btn opacity-0">
-            <Button
-              variant="outline"
-              size="lg"
-              className="w-full min-w-[160px] h-12 text-base"
-            >
-              Ver ranking
-            </Button>
-          </Link>
-          <Link href="/rules" className="action-btn opacity-0">
-            <Button
-              variant="outline"
-              size="lg"
-              className="w-full min-w-[160px] h-12 text-base"
-            >
-              Ver reglas
-            </Button>
-          </Link>
+      {/* Features */}
+      <section className="relative z-10 mx-auto max-w-6xl px-4 pb-20">
+        <div className="grid gap-4 sm:gap-5 md:grid-cols-3">
+          <FeatureCard
+            icon="01"
+            title="Predicciones"
+            description="Marca tu pronostico para los 104 partidos antes del silbatazo inicial."
+            href="/matches"
+            cta="Ver partidos"
+          />
+          <FeatureCard
+            icon="02"
+            title="Ranking"
+            description="Sube posiciones partido a partido. El mejor pronosticador se lleva la gloria."
+            href="/leaderboard"
+            cta="Ver tabla"
+          />
+          <FeatureCard
+            icon="03"
+            title="Reglas"
+            description="Marcador exacto, ganador, empate. Conoce como se reparten los puntos."
+            href="/rules"
+            cta="Leer reglas"
+          />
         </div>
-      </div>
+      </section>
     </div>
   );
 }
 
 function CountdownUnit({ value, label }: { value: number; label: string }) {
   return (
-    <div className="countdown-item flex flex-col items-center opacity-0">
-      <span className="text-4xl sm:text-5xl font-bold tabular-nums leading-none">
+    <div className="countdown-item flex flex-col items-center opacity-0 min-w-[3.5rem] sm:min-w-[4.5rem]">
+      <span
+        className="text-display text-4xl sm:text-6xl text-white tabular-nums leading-none"
+        aria-hidden="true"
+      >
         {String(value).padStart(2, "0")}
       </span>
-      <span className="text-xs text-blue-300 uppercase tracking-wide mt-1">
+      <span className="sr-only">{`${value} ${label}`}</span>
+      <span className="text-[0.6rem] sm:text-xs text-brand-electric/80 uppercase tracking-[0.2em] mt-2 font-mono">
         {label}
       </span>
     </div>
+  );
+}
+
+function CountdownSeparator() {
+  return (
+    <span
+      className="text-display text-4xl sm:text-6xl text-brand-electric/40 self-start leading-none mt-1"
+      aria-hidden="true"
+    >
+      :
+    </span>
+  );
+}
+
+function FeatureCard({
+  icon,
+  title,
+  description,
+  href,
+  cta,
+}: {
+  icon: string;
+  title: string;
+  description: string;
+  href: string;
+  cta: string;
+}) {
+  return (
+    <Link href={href} className="feature-card opacity-0 group block">
+      <Card className="h-full bg-card/70 border-brand-electric/20 hover:border-brand-electric/60 transition-all hover:-translate-y-1 hover:shadow-[0_8px_40px_rgba(72,125,251,0.18)]">
+        <CardContent className="p-6 space-y-3">
+          <span className="font-mono text-xs text-brand-electric tracking-widest">
+            {icon}
+          </span>
+          <h2 className="font-display text-2xl text-white not-italic">
+            {title}
+          </h2>
+          <p className="text-sm text-white/70 leading-relaxed">{description}</p>
+          <p className="pt-2 text-sm text-brand-electric font-medium inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+            {cta}
+            <span aria-hidden="true">&rarr;</span>
+          </p>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }

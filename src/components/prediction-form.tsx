@@ -70,35 +70,56 @@ export function PredictionForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Tu prediccion</CardTitle>
+        <CardTitle className="text-display text-xl uppercase italic">
+          Tu prediccion
+        </CardTitle>
       </CardHeader>
       <CardContent>
         {disabled ? (
-          <p className="text-sm text-muted-foreground">
-            Este partido ya no acepta predicciones.
-          </p>
+          <div className="rounded-lg bg-secondary/60 px-4 py-6 text-center">
+            <p className="text-sm text-muted-foreground">
+              Este partido ya no acepta predicciones.
+            </p>
+          </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="flex items-end gap-4 justify-center">
-              <div className="space-y-1 text-center">
-                <Label className="text-xs">{homeTeamName}</Label>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="flex items-end justify-center gap-4">
+              <div className="flex flex-col items-center gap-2">
+                <Label className="max-w-[6rem] truncate text-center" title={homeTeamName}>
+                  {homeTeamName}
+                </Label>
                 <NumberInput
                   value={homeScore}
                   onChange={setHomeScore}
-                  className="w-16 text-center text-lg font-bold"
+                  aria-label={`Marcador de ${homeTeamName}`}
+                  className="text-display h-16 w-20 text-center text-3xl tabular-nums"
                 />
               </div>
-              <span className="text-lg font-bold pb-2">-</span>
-              <div className="space-y-1 text-center">
-                <Label className="text-xs">{awayTeamName}</Label>
+              <span
+                className="text-display pb-3 text-3xl text-muted-foreground"
+                aria-hidden="true"
+              >
+                -
+              </span>
+              <div className="flex flex-col items-center gap-2">
+                <Label className="max-w-[6rem] truncate text-center" title={awayTeamName}>
+                  {awayTeamName}
+                </Label>
                 <NumberInput
                   value={awayScore}
                   onChange={setAwayScore}
-                  className="w-16 text-center text-lg font-bold"
+                  aria-label={`Marcador de ${awayTeamName}`}
+                  className="text-display h-16 w-20 text-center text-3xl tabular-nums"
                 />
               </div>
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button
+              type="submit"
+              variant="fire"
+              size="lg"
+              className="h-11 w-full text-base font-semibold uppercase tracking-wide"
+              disabled={loading}
+            >
               {loading ? "Guardando..." : "Guardar prediccion"}
             </Button>
           </form>

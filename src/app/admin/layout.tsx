@@ -14,25 +14,42 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
-      <div className="flex items-center gap-6 mb-8">
-        <h1 className="text-3xl font-bold text-blue-900">Admin</h1>
-        <nav className="flex gap-4">
-          <Link
-            href="/admin"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Partidos
-          </Link>
-          <Link
-            href="/admin/scoring"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Puntuacion
-          </Link>
+    <div className="mx-auto max-w-6xl px-4 py-6 sm:py-8">
+      <header className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-4 mb-6">
+        <div className="flex items-baseline gap-3">
+          <h1 className="text-display text-3xl sm:text-4xl text-white">
+            ADMIN
+          </h1>
+          <span className="text-[0.65rem] font-mono uppercase tracking-widest text-brand-electric">
+            Panel de control
+          </span>
+        </div>
+        <nav
+          className="flex gap-1 rounded-lg border border-brand-electric/20 bg-card/70 p-1 text-sm w-full sm:w-auto"
+          aria-label="Secciones de administracion"
+        >
+          <AdminNavLink href="/admin">Partidos</AdminNavLink>
+          <AdminNavLink href="/admin/scoring">Puntuacion</AdminNavLink>
         </nav>
-      </div>
+      </header>
       {children}
     </div>
+  );
+}
+
+function AdminNavLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      className="flex-1 sm:flex-none px-3 py-1.5 rounded-md text-center text-white/70 hover:text-white hover:bg-brand-electric/15 transition-colors"
+    >
+      {children}
+    </Link>
   );
 }

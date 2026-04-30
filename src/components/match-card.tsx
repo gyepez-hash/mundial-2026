@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { LockIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { STATUS_LABELS } from "@/lib/match-constants";
+import { cn } from "@/lib/utils";
 
 interface MatchCardProps {
   match: {
@@ -32,11 +34,17 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
   const date = new Date(match.dateTime);
 
   return (
-    <Link href={`/matches/${match.id}`}>
-      <Card className="hover:shadow-md hover:shadow-blue-100 transition-shadow cursor-pointer border-blue-100">
+    <Link href={`/matches/${match.id}`} className="group block">
+      <Card
+        className={cn(
+          "cursor-pointer transition-all duration-200",
+          "group-hover:-translate-y-0.5 group-hover:ring-primary/40 group-hover:shadow-lg group-hover:shadow-primary/15",
+          isLocked && "opacity-80"
+        )}
+      >
         <CardContent className="p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-muted-foreground">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs text-muted-foreground tabular-nums">
               {date.toLocaleDateString("es-MX", {
                 day: "numeric",
                 month: "short",
@@ -44,32 +52,33 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
                 minute: "2-digit",
               })}
             </span>
-            <div className="flex gap-1">
+            <div className="flex gap-1.5">
               {match.group && (
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="outline" className="text-[10px] uppercase tracking-wide">
                   Grupo {match.group}
                 </Badge>
               )}
               {isFinished && (
-                <Badge variant="secondary" className="text-xs">
+                <Badge variant="accent" className="text-[10px] uppercase tracking-wide">
                   {STATUS_LABELS["finished"]}
                 </Badge>
               )}
               {isLocked && (
-                <Badge variant="destructive" className="text-xs">
+                <Badge variant="destructive" className="text-[10px] uppercase tracking-wide gap-1">
+                  <LockIcon className="size-3" />
                   {STATUS_LABELS["locked"]}
                 </Badge>
               )}
             </div>
           </div>
 
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex-1 flex items-center justify-end gap-2">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-1 items-center justify-end gap-2.5">
               <div className="text-right">
-                <p className="font-semibold text-sm">
+                <p className="text-sm font-semibold text-foreground">
                   {match.homeTeam?.name ?? "Por definir"}
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
                   {match.homeTeam?.code ?? "TBD"}
                 </p>
               </div>
@@ -77,34 +86,45 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
                 <img
                   src={match.homeTeam.flagUrl}
                   alt={match.homeTeam.code}
-                  className="w-8 h-6 object-cover rounded-sm shadow-sm"
+                  className="h-7 w-9 rounded-sm object-cover shadow-md ring-1 ring-border/50"
                 />
               )}
             </div>
 
-            <div className="px-3 py-1 rounded-md bg-blue-50 text-center min-w-[60px]">
+            <div
+              className={cn(
+                "min-w-[68px] rounded-lg px-3 py-1.5 text-center",
+                isFinished
+                  ? "bg-electric-gradient text-white shadow-md shadow-primary/30"
+                  : "bg-secondary/60 ring-1 ring-border/50"
+              )}
+            >
               {isFinished ? (
-                <span className="font-bold text-lg">
+                <span className="text-display text-2xl leading-none tabular-nums">
                   {match.homeScore} - {match.awayScore}
                 </span>
+              ) : isLocked ? (
+                <LockIcon className="mx-auto size-4 text-muted-foreground" />
               ) : (
-                <span className="text-sm text-muted-foreground">vs</span>
+                <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                  vs
+                </span>
               )}
             </div>
 
-            <div className="flex-1 flex items-center gap-2">
+            <div className="flex flex-1 items-center gap-2.5">
               {match.awayTeam?.flagUrl && (
                 <img
                   src={match.awayTeam.flagUrl}
                   alt={match.awayTeam.code}
-                  className="w-8 h-6 object-cover rounded-sm shadow-sm"
+                  className="h-7 w-9 rounded-sm object-cover shadow-md ring-1 ring-border/50"
                 />
               )}
               <div className="text-left">
-                <p className="font-semibold text-sm">
+                <p className="text-sm font-semibold text-foreground">
                   {match.awayTeam?.name ?? "Por definir"}
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
                   {match.awayTeam?.code ?? "TBD"}
                 </p>
               </div>
@@ -112,14 +132,17 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
           </div>
 
           {prediction && (
-            <div className="mt-3 pt-2 border-t text-center">
+            <div className="mt-3 flex items-center justify-center gap-2 border-t border-border/40 pt-2 text-center">
               <span className="text-xs text-muted-foreground">
-                Tu prediccion: {prediction.homeScore} - {prediction.awayScore}
+                Tu prediccion:{" "}
+                <span className="font-semibold text-foreground tabular-nums">
+                  {prediction.homeScore} - {prediction.awayScore}
+                </span>
               </span>
               {prediction.points !== null && (
                 <Badge
-                  variant={prediction.points > 0 ? "default" : "secondary"}
-                  className="ml-2 text-xs"
+                  variant={prediction.points > 0 ? "fire" : "secondary"}
+                  className="text-xs"
                 >
                   {prediction.points > 0 ? `+${prediction.points} pts` : "0 pts"}
                 </Badge>
@@ -127,7 +150,7 @@ export function MatchCard({ match, prediction }: MatchCardProps) {
             </div>
           )}
 
-          <p className="text-xs text-muted-foreground mt-2 text-center">
+          <p className="mt-2 text-center text-xs text-muted-foreground/80">
             {match.venue}
           </p>
         </CardContent>
